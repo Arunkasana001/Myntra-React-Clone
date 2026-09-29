@@ -22,45 +22,49 @@ The catalog is loaded from a separate API. The bag is held in Redux state and is
 ## Requirements
 
 - Node.js and npm
-- A catalog API available at `http://localhost:8080/items`
 
-The API must return JSON in this shape:
+The included Express backend listens on port `8080`. `GET /items` returns the catalog in this shape:
 
 ```json
 {
   "items": [
     {
-      "id": 1,
-      "image": "/images/product.jpg",
-      "rating": { "stars": 4.5, "count": 120 },
+      "id": "001",
+      "image": "images/1.jpg",
       "company": "Example Brand",
       "item_name": "Product name",
       "current_price": 799,
       "original_price": 1299,
-      "discount_percentage": 38
+      "discount_percentage": 38,
+      "return_period": 14,
+      "delivery_date": "10 Oct 2026",
+      "rating": { "stars": 4.5, "count": 120 }
     }
   ]
 }
 ```
 
-Product image URLs must be reachable by the browser. The API/backend is not included in this project.
+The backend also provides `GET /items/:id` and `POST /items`. New items submitted to the POST endpoint are assigned an ID and saved to `actual-backend/items.json`. Image paths are read by the frontend, so the referenced images must be available under the frontend's public assets.
 
 ## Run locally
 
-Open a terminal in the app directory and install dependencies:
+Install and start the backend in one terminal:
+
+```bash
+cd actual-backend
+npm install
+npm start
+```
+
+In a second terminal, install and start the React app:
 
 ```bash
 cd Myntra-react-clone
 npm install
-```
-
-Start the catalog API on port `8080`, then start the Vite development server:
-
-```bash
 npm run dev
 ```
 
-Open the local URL printed by Vite. The app routes are `/` for the product listing and `/bag` for the shopping bag.
+Open the local URL printed by Vite. Keep the backend running while using the app. The routes are `/` for the product listing and `/bag` for the shopping bag.
 
 ## Other commands
 
@@ -74,13 +78,17 @@ npm run lint     # Run ESLint
 
 ```text
 Myntra-React-Clone/
+├── actual-backend/            # Express API and JSON file storage
+│   ├── app.js                  # API routes and port 8080 server
+│   ├── items.json              # Persistent product catalog
+│   └── data/items.js           # Catalog read/write helpers
 └── Myntra-react-clone/       # Vite application root
 		├── public/images/        # Static product and page images
 		└── src/
-				├── components/       # Header, product cards, bag, footer, loading UI
-				├── routes/           # Home, bag, and shared app layout
-				├── store/            # Redux Toolkit slices and store
-				├── data/              # Local data module
-				├── main.jsx           # React entry point and route setup
-				└── index.css          # Global styles
+  ├── components/        # Header, product cards, bag, footer, loading UI
+  ├── routes/            # Home, bag, and shared app layout
+  ├── store/             # Redux Toolkit slices and store
+  ├── data/              # Local data module
+  ├── main.jsx           # React entry point and route setup
+  └── index.css          # Global styles
 ```
